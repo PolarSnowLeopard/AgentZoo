@@ -1,0 +1,5 @@
+openai
+openai-agents
+tqdm
+fastapi
+uvicorn
