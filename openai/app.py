@@ -26,7 +26,8 @@ async def search(request: SearchRequest):
     raw_result = await search_microservices_async(request_dict)
 
     try:
-        parsed = json.loads(raw_result) if isinstance(raw_result, str) else raw_result
+        # raw_result是个字典
+        parsed = raw_result
     except json.JSONDecodeError:
         parsed = {"raw_output": str(raw_result)}
 
@@ -34,4 +35,4 @@ async def search(request: SearchRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8002)

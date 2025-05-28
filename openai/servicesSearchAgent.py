@@ -6,6 +6,11 @@ import json
 import asyncio
 from agents import Agent, Runner
 from agents.tool import WebSearchTool, FileSearchTool
+from pydantic import BaseModel
+
+class ServiceResponse(BaseModel):
+    services: list[str]
+    reasoning: str
 
 dotenv.load_dotenv()
 client = OpenAI(
@@ -54,6 +59,7 @@ assistant = Agent(
         "}"
     ),
     tools=tools,
+    output_type=ServiceResponse,
 )
 
 def construct_user_message(query_dict):
@@ -109,7 +115,8 @@ async def search_microservices_async(query_dict: dict):
         result = await Runner.run(
             assistant, user_message, max_turns=8
         )
-        return getattr(result, "final_output", result)
+        result = getattr(result, "final_output", result)
+        return {"services": result.services, "reasoning": result.reasoning}
     except Exception as e:
         return json.dumps({
             "services": [],
